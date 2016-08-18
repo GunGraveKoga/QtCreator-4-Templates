@@ -1,0 +1,200 @@
+{
+    "version": 1,
+    "supportedProjectTypes": [ ],
+    "id": "A.ObjC++ Class",
+    "category": "O.ObjC++",
+    "trDescription": "Creates a ObjC header and a source file for a new class that you can add to a ObjC++ project.",
+    "trDisplayName": "ObjC++ Class",
+    "trDisplayCategory": "ObjC++",
+    "icon": "../../global/genericfilewizard.png",
+    "enabled": "%{JS: [ %{Plugins} ].indexOf('CppEditor') >= 0}",
+
+    "options":
+    [
+        { "key": "TargetPath", "value": "%{Path}" },
+        { "key": "HdrPath", "value": "%{Path}/%{HdrFileName}" },
+        { "key": "SrcPath", "value": "%{Path}/%{SrcFileName}" },
+        { "key": "CN", "value": "%{JS: Cpp.className('%{Class}')}" },
+        { "key": "Base", "value": "%{JS: ( '%{BaseCB}' === '' ) ? '%{BaseEdit}' : '%{BaseCB}'}" },
+        { "key": "isQObject", "value": "%{JS: [ 'QObject', 'QWidget', 'QMainWindow', 'QDeclarativeItem', 'QQuickItem'].indexOf('%{Base}') >= 0 }" },
+        { "key": "GUARD", "value": "%{JS: Cpp.classToHeaderGuard('%{Class}', '%{JS: Util.preferredSuffix('text/x-c++hdr')}')}" },
+        { "key": "SharedDataInit", "value": "%{JS: ('%{IncludeQSharedData}') ? 'data(new %{CN}Data)' : '' }" }
+    ],
+
+    "pages":
+    [
+        {
+            "trDisplayName": "Define Class",
+            "trShortTitle": "Details",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "Class",
+                    "trDisplayName": "Class name:",
+                    "mandatory": true,
+                    "type": "LineEdit",
+                    "data": { "validator": "(?:(?:[a-zA-Z_][a-zA-Z_0-9]*::)*[a-zA-Z_][a-zA-Z_0-9]*|)" }
+                },
+                {
+                    "name": "BaseCB",
+                    "trDisplayName": "Base class:",
+                    "type": "ComboBox",
+                    "data":
+                    {
+                        "items": [ { "trKey": "<Custom>", "value": "" },
+                                   "OFObject", "OFStream", "OFArray", "OFDictionary", "OFString" ]
+                    }
+                },
+                {
+                    "name": "BaseEdit",
+                    "type": "LineEdit",
+                    "enabled": "%{JS: '%{BaseCB}' === ''}",
+                    "mandatory": false,
+                    "data":
+                    {
+                        "trText": "%{BaseCB}",
+                        "trDisabledText": "%{BaseCB}"
+                    }
+                },
+
+                {
+                    "name": "Sp1",
+                    "type": "Spacer",
+                    "data": { "factor": 2 }
+                },
+                {
+                    "name": "IncludeOFString",
+                    "trDisplayName": "Include OFString",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFString",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFString'}"
+                    }
+                },
+                {
+                    "name": "IncludeOFArray",
+                    "trDisplayName": "Include OFArray",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFArray",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFArray'}"
+                    }
+                },
+                {
+                    "name": "IncludeOFDictionary",
+                    "trDisplayName": "Include OFDictionary",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFDictionary",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFDictionary'}"
+                    }
+                },
+                {
+                    "name": "IncludeOFMuttableString",
+                    "trDisplayName": "Include OFMuttableString",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFMuttableString",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFMuttableString'}"
+                    }
+                },
+                {
+                    "name": "IncludeOFMutableArray",
+                    "trDisplayName": "Include OFMutableArray",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFMutableArray",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFMutableArray'}"
+                    }
+                },
+                {
+                    "name": "IncludeOFMutableDictionary",
+                    "trDisplayName": "Include OFMutableDictionary",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checkedValue": "OFMutableDictionary",
+                        "uncheckedValue": "",
+                        "checked": "%{JS: '%{BaseCB}' === 'OFMutableDictionary'}"
+                    }
+                },
+                {
+                    "name": "Sp2",
+                    "type": "Spacer",
+                    "data": { "size": 12 }
+                },
+
+                {
+                    "name": "HdrFileName",
+                    "type": "LineEdit",
+                    "trDisplayName": "Header file:",
+                    "mandatory": true,
+                    "data": { "trText": "%{JS: Cpp.classToFileName('%{Class}', '%{JS: Util.preferredSuffix('text/x-c++hdr')}')}" }
+                },
+                {
+                    "name": "SrcFileName",
+                    "type": "LineEdit",
+                    "trDisplayName": "Source file:",
+                    "mandatory": true,
+                    "data": { "trText": "%{JS: Cpp.classToFileName('%{Class}', '%{JS: Util.preferredSuffix('text/x-objcsrc')}')}" }
+                },
+                {
+                    "name": "Path",
+                    "type": "PathChooser",
+                    "trDisplayName": "Path:",
+                    "mandatory": true,
+                    "data":
+                    {
+                        "kind": "existingDirectory",
+                        "basePath": "%{InitialPath}",
+                        "path": "%{InitialPath}"
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Project Management",
+            "trShortTitle": "Summary",
+            "typeId": "Summary"
+        }
+    ],
+
+    "generators":
+    [
+        {
+            "typeId": "File",
+            "data":
+            [
+                {
+                    "source": "file.h",
+                    "target": "%{HdrPath}",
+                    "openInEditor": true,
+                    "options": [
+                        { "key": "Cpp:License:FileName", "value": "%{HdrFileName}" },
+                        { "key": "Cpp:License:ClassName", "value": "%{CN}" }
+                    ]
+                },
+                {
+                    "source": "file.mm",
+                    "target": "%{SrcPath}",
+                    "openInEditor": true,
+                    "options": [
+                        { "key": "Cpp:License:FileName", "value": "%{SrcFileName}" },
+                        { "key": "Cpp:License:ClassName", "value": "%{CN}" }
+                    ]
+                }
+            ]
+        }
+    ]
+}
